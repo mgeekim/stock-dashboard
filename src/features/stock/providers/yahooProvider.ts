@@ -9,6 +9,14 @@ import {
 import { StockDataProvider, ProviderError } from './index';
 
 /**
+ * Yahoo Finance 인스턴스 생성 헬퍼
+ */
+async function getYahooFinance() {
+  const { default: YahooFinance } = await import('yahoo-finance2');
+  return new YahooFinance();
+}
+
+/**
  * Yahoo Finance Provider
  * yahoo-finance2 라이브러리를 사용하여 미국 주식 데이터 제공
  */
@@ -21,7 +29,7 @@ export class YahooProvider implements StockDataProvider {
    */
   async getQuote(symbol: string): Promise<StockQuote> {
     try {
-      const yahooFinance = (await import('yahoo-finance2')).default;
+      const yahooFinance = await getYahooFinance();
 
       const quote = await yahooFinance.quote(symbol);
 
@@ -70,7 +78,7 @@ export class YahooProvider implements StockDataProvider {
     customPeriod?: CustomPeriod
   ): Promise<HistoricalDataPoint[]> {
     try {
-      const yahooFinance = (await import('yahoo-finance2')).default;
+      const yahooFinance = await getYahooFinance();
 
       let startDate: Date;
       let endDate: Date = new Date();
@@ -119,7 +127,7 @@ export class YahooProvider implements StockDataProvider {
    */
   async search(query: string): Promise<SearchResult[]> {
     try {
-      const yahooFinance = (await import('yahoo-finance2')).default;
+      const yahooFinance = await getYahooFinance();
 
       const results = await yahooFinance.search(query, {
         quotesCount: 10,
