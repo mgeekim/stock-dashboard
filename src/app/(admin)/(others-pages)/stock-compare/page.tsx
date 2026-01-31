@@ -1,13 +1,9 @@
+"use client";
+
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ComponentCard from "@/components/common/ComponentCard";
-import { Metadata } from "next";
 import React from "react";
 import { StockCompareContainer } from "@/features/stock";
-
-export const metadata: Metadata = {
-  title: "Stock Compare | Dashboard",
-  description: "Compare multiple stocks side by side with percent or price mode",
-};
 
 export default function StockComparePage() {
   return (

@@ -1,12 +1,8 @@
+"use client";
+
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import { Metadata } from "next";
 import React from "react";
 import { StockChartContainer } from "@/features/stock";
-
-export const metadata: Metadata = {
-  title: "Stock Chart | Dashboard",
-  description: "Real-time stock chart with candlestick, line, and area views",
-};
 
 export default function StockChartPage() {
   return (
