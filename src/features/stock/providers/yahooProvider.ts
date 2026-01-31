@@ -80,40 +80,43 @@ export class YahooProvider implements StockDataProvider {
     try {
       const yahooFinance = await getYahooFinance();
 
-      let startDate: Date;
-      let endDate: Date = new Date();
+      let period1: Date;
+      let period2: Date = new Date();
       let interval: '1m' | '5m' | '15m' | '1h' | '1d' | '1wk' | '1mo';
 
       if (period === 'custom' && customPeriod) {
-        startDate = new Date(customPeriod.startDate);
-        endDate = new Date(customPeriod.endDate);
+        period1 = new Date(customPeriod.startDate);
+        period2 = new Date(customPeriod.endDate);
         interval = this.mapInterval(customPeriod.interval);
       } else {
         const config = PERIOD_CONFIG[period as Exclude<PeriodOption, 'custom'>];
-        startDate = new Date();
-        startDate.setDate(startDate.getDate() - (config.days || 365));
+        period1 = new Date();
+        period1.setDate(period1.getDate() - (config.days || 365));
         interval = config.interval as typeof interval;
       }
 
-      const historical = await yahooFinance.historical(symbol, {
-        period1: startDate,
-        period2: endDate,
+      // v3 API uses chart() method instead of historical()
+      const result = await yahooFinance.chart(symbol, {
+        period1: period1.toISOString().split('T')[0],
+        period2: period2.toISOString().split('T')[0],
         interval,
       });
 
-      if (!historical || historical.length === 0) {
+      if (!result || !result.quotes || result.quotes.length === 0) {
         return [];
       }
 
-      return historical.map((item) => ({
-        date: item.date.toISOString().split('T')[0],
-        timestamp: item.date.getTime(),
-        open: item.open || 0,
-        high: item.high || 0,
-        low: item.low || 0,
-        close: item.close || 0,
-        volume: item.volume || 0,
-      }));
+      return result.quotes
+        .filter((item: { date: Date | null }) => item.date !== null)
+        .map((item: { date: Date; open: number; high: number; low: number; close: number; volume: number }) => ({
+          date: item.date.toISOString().split('T')[0],
+          timestamp: Math.floor(item.date.getTime() / 1000),
+          open: item.open || 0,
+          high: item.high || 0,
+          low: item.low || 0,
+          close: item.close || 0,
+          volume: item.volume || 0,
+        }));
     } catch (error) {
       throw new ProviderError(
         `과거 데이터 조회 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
