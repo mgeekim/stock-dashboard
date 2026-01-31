@@ -1,10 +1,11 @@
 ---
 id: TASK-1.5
 title: 'Phase 5: 차트 컴포넌트'
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - '@claude'
 created_date: '2026-01-31 07:31'
-updated_date: '2026-01-31 07:35'
+updated_date: '2026-01-31 11:58'
 labels:
   - frontend
   - chart
@@ -20,9 +21,9 @@ ApexCharts 기반 주식 차트 컴포넌트 구현
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 src/features/stock/components/charts/BaseStockChart.tsx 생성 - SSR-safe 차트 래퍼
-- [ ] #2 src/features/stock/components/charts/CandlestickChart.tsx 생성 - OHLC 캔들스틱 차트
-- [ ] #3 src/features/stock/components/charts/StockLineChart.tsx 생성 - 라인/영역 차트
+- [x] #1 src/features/stock/components/charts/BaseStockChart.tsx 생성 - SSR-safe 차트 래퍼
+- [x] #2 src/features/stock/components/charts/CandlestickChart.tsx 생성 - OHLC 캔들스틱 차트
+- [x] #3 src/features/stock/components/charts/StockLineChart.tsx 생성 - 라인/영역 차트
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -55,3 +56,31 @@ ApexCharts 기반 주식 차트 컴포넌트 구현
    - 간단한 툴팁 (날짜, 가격)
    - 반응형 높이 처리
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Phase 5: ApexCharts 기반 차트 컴포넌트 구현 완료
+
+## 구현 내용
+
+### BaseStockChart.tsx
+SSR-safe 차트 래퍼 컴포넌트
+- dynamic import로 react-apexcharts 로드 (ssr: false)
+- useTheme()으로 다크모드 자동 감지 및 스타일 적용
+- 로딩 시 Skeleton UI, 에러 시 에러 메시지 표시
+- overflow-x-auto로 반응형 처리
+
+### CandlestickChart.tsx
+OHLC 캔들스틱 차트
+- HistoricalDataPoint[]를 ApexCharts 형식으로 변환
+- showVolume 옵션으로 하단 거래량 차트 표시
+- 툴바 (zoom, pan, download) 제공
+- 커스텀 툴팁 (OHLC 정보 포맷팅)
+
+### StockLineChart.tsx
+라인/영역 차트
+- valueKey로 표시할 값 선택 (close/open/high/low)
+- filled 옵션으로 그라데이션 영역 차트 전환
+- color 옵션으로 개별 색상 지정 가능
+<!-- SECTION:FINAL_SUMMARY:END -->
