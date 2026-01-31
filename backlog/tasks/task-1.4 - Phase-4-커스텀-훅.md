@@ -1,10 +1,11 @@
 ---
 id: TASK-1.4
 title: 'Phase 4: 커스텀 훅'
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - '@claude'
 created_date: '2026-01-31 07:30'
-updated_date: '2026-01-31 07:35'
+updated_date: '2026-01-31 11:50'
 labels:
   - frontend
   - hooks
@@ -20,8 +21,8 @@ parent_task_id: TASK-1
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 src/features/stock/hooks/useStockData.ts 생성 - 단일 종목 데이터 훅
-- [ ] #2 src/features/stock/hooks/useStockCompare.ts 생성 - 종목 비교 훅 (최대 10개)
+- [x] #1 src/features/stock/hooks/useStockData.ts 생성 - 단일 종목 데이터 훅
+- [x] #2 src/features/stock/hooks/useStockCompare.ts 생성 - 종목 비교 훅 (최대 10개)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -46,3 +47,29 @@ parent_task_id: TASK-1
      - 각 종목의 시작가 대비 변동률 계산
    - useMemo로 변환된 데이터 캐싱
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Phase 4: React 커스텀 훅 구현 완료
+
+## 구현 내용
+
+### useStockData.ts
+단일 종목 데이터 fetching 훅
+- Options: symbol, period, customPeriod, autoFetch
+- Returns: data, loading, error, refetch, setPeriod, setSymbol, setCustomPeriod
+- AbortController로 요청 취소 처리
+- symbol/period 변경 시 자동 fetch
+
+### useStockCompare.ts
+종목 비교 훅 (최대 10개)
+- Options: symbols[], period, compareMode, autoFetch
+- Returns: data, loading, error, partialErrors, addSymbol, removeSymbol, setSymbols, setPeriod, setCompareMode, refetch, canAddMore
+- 중복 체크 및 최대 개수 제한
+- useMemo로 퍼센트 변환 데이터 캐싱
+- 시작가 대비 변동률 계산 (compareMode === "percent")
+
+### index.ts
+- 훅 및 타입 re-export
+<!-- SECTION:FINAL_SUMMARY:END -->
