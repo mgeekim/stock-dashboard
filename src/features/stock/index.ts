@@ -4,9 +4,8 @@
 export type {
   StockQuote,
   HistoricalDataPoint,
-  PeriodOption,
-  CustomPeriod,
-  PeriodConfig,
+  TickInterval,
+  IntervalConfig,
   StockData,
   FetchState,
   CompareDataPoint,
@@ -14,9 +13,10 @@ export type {
   SearchResult,
   ChartType,
   ChartColors,
+  PeriodOption, // Legacy alias
 } from "./types";
 
-export { PERIOD_CONFIG, DEFAULT_CHART_COLORS, COMPARE_COLORS } from "./types";
+export { INTERVAL_CONFIG, DEFAULT_CHART_COLORS, COMPARE_COLORS } from "./types";
 
 // ===================
 // Hooks
@@ -46,8 +46,7 @@ export { StockCompareContainer } from "./components/compare/StockCompareContaine
 // Components - Widgets
 // ===================
 export { StockInfoCard } from "./components/widgets/StockInfoCard";
-export { PeriodSelector } from "./components/widgets/PeriodSelector";
-export { DateRangePicker } from "./components/widgets/DateRangePicker";
+export { IntervalSelector } from "./components/widgets/IntervalSelector";
 export { StockSearchInput } from "./components/widgets/StockSearchInput";
 
 // ===================

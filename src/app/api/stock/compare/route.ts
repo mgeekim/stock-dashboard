@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getProvider, ProviderError } from '@/features/stock/providers';
 import {
-  PeriodOption,
+  TickInterval,
   StockQuote,
   HistoricalDataPoint,
 } from '@/features/stock/types';
@@ -9,7 +9,7 @@ import {
 interface CompareAPIResponse {
   success: boolean;
   symbols: string[];
-  period: PeriodOption;
+  interval: TickInterval;
   quotes: Record<string, StockQuote>;
   historical: Record<string, HistoricalDataPoint[]>;
   errors?: Record<string, string>;
@@ -24,7 +24,7 @@ const MAX_SYMBOLS = 10;
  *
  * Query Parameters:
  * - symbols: 콤마로 구분된 종목 코드 (예: AAPL,MSFT,GOOGL)
- * - period: 기간 옵션 (1d, 5d, 1m, 3m, 6m, 1y, 5y, max)
+ * - interval: 틱 간격 (1m, 3m, 5m, 10m, 30m, 1h, 1d, 1wk, 1mo) - 기본값: 1d
  */
 export async function GET(
   request: NextRequest
@@ -33,7 +33,7 @@ export async function GET(
 
   // 파라미터 파싱
   const symbolsParam = searchParams.get('symbols') || '';
-  const period = (searchParams.get('period') || '1y') as PeriodOption;
+  const interval = (searchParams.get('interval') || '1d') as TickInterval;
 
   // 종목 코드 파싱 및 정리
   const symbols = symbolsParam
@@ -47,7 +47,7 @@ export async function GET(
       {
         success: false,
         symbols: [],
-        period,
+        interval,
         quotes: {},
         historical: {},
         errors: { _request: '종목 코드를 입력해주세요' },
@@ -62,7 +62,7 @@ export async function GET(
       {
         success: false,
         symbols,
-        period,
+        interval,
         quotes: {},
         historical: {},
         errors: {
@@ -75,7 +75,7 @@ export async function GET(
   }
 
   // 중복 제거
-  const uniqueSymbols = [...new Set(symbols)];
+  const uniqueSymbols = Array.from(new Set(symbols));
 
   // 결과 저장 객체
   const quotes: Record<string, StockQuote> = {};
@@ -89,7 +89,7 @@ export async function GET(
 
       const [quote, history] = await Promise.all([
         provider.getQuote(symbol),
-        provider.getHistorical(symbol, period),
+        provider.getHistorical(symbol, interval),
       ]);
 
       quotes[symbol] = quote;
@@ -116,7 +116,7 @@ export async function GET(
   const response: CompareAPIResponse = {
     success: hasPartialSuccess,
     symbols: uniqueSymbols,
-    period,
+    interval,
     quotes,
     historical,
     errors: Object.keys(errors).length > 0 ? errors : undefined,

@@ -3,19 +3,19 @@
 import React, { useState } from "react";
 import ComponentCard from "@/components/common/ComponentCard";
 import { useStockData, UseStockDataOptions } from "../../hooks";
-import { ChartType, PeriodOption, CustomPeriod } from "../../types";
+import { ChartType, TickInterval } from "../../types";
 import { CandlestickChart } from "../charts/CandlestickChart";
 import { StockLineChart } from "../charts/StockLineChart";
 import { StockInfoCard } from "../widgets/StockInfoCard";
-import { PeriodSelector } from "../widgets/PeriodSelector";
+import { IntervalSelector } from "../widgets/IntervalSelector";
 import { StockSearchInput } from "../widgets/StockSearchInput";
 
 export interface StockChartContainerProps {
   initialSymbol?: string;
-  initialPeriod?: PeriodOption;
+  initialInterval?: TickInterval;
   chartType?: ChartType;
   showSearch?: boolean;
-  showPeriodSelector?: boolean;
+  showIntervalSelector?: boolean;
   showInfoCard?: boolean;
   showVolume?: boolean;
   showChartTypeToggle?: boolean;
@@ -25,14 +25,14 @@ export interface StockChartContainerProps {
 
 /**
  * 주식 차트 전체 기능 컨테이너 컴포넌트
- * 검색, 기간 선택, 시세 정보, 차트를 통합합니다.
+ * 검색, 간격 선택, 시세 정보, 차트를 통합합니다.
  */
 export function StockChartContainer({
   initialSymbol = "AAPL",
-  initialPeriod = "1y",
+  initialInterval = "1d",
   chartType: initialChartType = "candlestick",
   showSearch = true,
-  showPeriodSelector = true,
+  showIntervalSelector = true,
   showInfoCard = true,
   showVolume = true,
   showChartTypeToggle = true,
@@ -40,21 +40,19 @@ export function StockChartContainer({
   className = "",
 }: StockChartContainerProps) {
   const [chartType, setChartType] = useState<ChartType>(initialChartType);
-  const [customPeriod, setCustomPeriod] = useState<CustomPeriod | undefined>();
 
   const options: UseStockDataOptions = {
     symbol: initialSymbol,
-    period: initialPeriod,
-    customPeriod,
+    interval: initialInterval,
   };
 
   const {
     data,
     loading,
     error,
+    interval,
     setSymbol,
-    setPeriod,
-    setCustomPeriod: updateCustomPeriod,
+    setInterval,
   } = useStockData(options);
 
   // 종목 검색 핸들러
@@ -63,19 +61,9 @@ export function StockChartContainer({
     onSymbolChange?.(symbol);
   };
 
-  // 기간 변경 핸들러
-  const handlePeriodChange = (period: PeriodOption) => {
-    setPeriod(period);
-    if (period !== "custom") {
-      setCustomPeriod(undefined);
-      updateCustomPeriod(undefined);
-    }
-  };
-
-  // 커스텀 기간 변경 핸들러
-  const handleCustomPeriodChange = (newCustomPeriod: CustomPeriod) => {
-    setCustomPeriod(newCustomPeriod);
-    updateCustomPeriod(newCustomPeriod);
+  // 간격 변경 핸들러
+  const handleIntervalChange = (newInterval: TickInterval) => {
+    setInterval(newInterval);
   };
 
   // 차트 타입 토글 버튼
@@ -130,7 +118,7 @@ export function StockChartContainer({
       className={className}
     >
       <div className="space-y-4">
-        {/* 헤더 영역: 검색 + 기간 선택 + 차트 타입 */}
+        {/* 헤더 영역: 검색 + 간격 선택 + 차트 타입 */}
         <div className="flex flex-col lg:flex-row gap-4">
           {/* 검색 */}
           {showSearch && (
@@ -143,15 +131,12 @@ export function StockChartContainer({
             </div>
           )}
 
-          {/* 기간 선택 + 차트 타입 */}
+          {/* 간격 선택 + 차트 타입 */}
           <div className="flex flex-wrap items-center gap-3">
-            {showPeriodSelector && (
-              <PeriodSelector
-                value={data?.symbol ? (customPeriod ? "custom" : initialPeriod) : initialPeriod}
-                onChange={handlePeriodChange}
-                showCustom={true}
-                customPeriod={customPeriod}
-                onCustomChange={handleCustomPeriodChange}
+            {showIntervalSelector && (
+              <IntervalSelector
+                value={interval}
+                onChange={handleIntervalChange}
               />
             )}
             {showChartTypeToggle && <ChartTypeToggle />}

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   StockQuote,
   HistoricalDataPoint,
-  PeriodOption,
+  TickInterval,
   CompareDataPoint,
   StockCompareData,
 } from '../types';
@@ -11,7 +11,7 @@ import {
 interface CompareAPIResponse {
   success: boolean;
   symbols: string[];
-  period: PeriodOption;
+  interval: TickInterval;
   quotes: Record<string, StockQuote>;
   historical: Record<string, HistoricalDataPoint[]>;
   errors?: Record<string, string>;
@@ -24,7 +24,7 @@ const MAX_SYMBOLS = 10;
 // 훅 옵션
 export interface UseStockCompareOptions {
   symbols?: string[];
-  period?: PeriodOption;
+  interval?: TickInterval;
   compareMode?: 'percent' | 'price';
   autoFetch?: boolean;
 }
@@ -38,7 +38,7 @@ export interface UseStockCompareReturn {
   addSymbol: (symbol: string) => boolean;
   removeSymbol: (symbol: string) => void;
   setSymbols: (symbols: string[]) => void;
-  setPeriod: (period: PeriodOption) => void;
+  setInterval: (interval: TickInterval) => void;
   setCompareMode: (mode: 'percent' | 'price') => void;
   refetch: () => Promise<void>;
   canAddMore: boolean;
@@ -56,7 +56,7 @@ export interface UseStockCompareReturn {
 export function useStockCompare(options: UseStockCompareOptions = {}): UseStockCompareReturn {
   const {
     symbols: initialSymbols = [],
-    period: initialPeriod = '1y',
+    interval: initialInterval = '1d',
     compareMode: initialCompareMode = 'percent',
     autoFetch = true,
   } = options;
@@ -65,7 +65,7 @@ export function useStockCompare(options: UseStockCompareOptions = {}): UseStockC
   const [symbols, setSymbolsState] = useState<string[]>(
     initialSymbols.slice(0, MAX_SYMBOLS).map((s) => s.toUpperCase())
   );
-  const [period, setPeriod] = useState<PeriodOption>(initialPeriod);
+  const [interval, setIntervalState] = useState<TickInterval>(initialInterval);
   const [compareMode, setCompareMode] = useState<'percent' | 'price'>(initialCompareMode);
   const [rawData, setRawData] = useState<{
     quotes: Record<string, StockQuote>;
@@ -102,7 +102,7 @@ export function useStockCompare(options: UseStockCompareOptions = {}): UseStockC
     try {
       const params = new URLSearchParams({
         symbols: symbols.join(','),
-        period,
+        interval,
       });
 
       const url = `/api/stock/compare?${params.toString()}`;
@@ -146,7 +146,7 @@ export function useStockCompare(options: UseStockCompareOptions = {}): UseStockC
         setLoading(false);
       }
     }
-  }, [symbols, period]);
+  }, [symbols, interval]);
 
   // 종목 추가 (중복 체크, 최대 개수 제한)
   const addSymbol = useCallback(
@@ -180,6 +180,11 @@ export function useStockCompare(options: UseStockCompareOptions = {}): UseStockC
     const upperSymbols = newSymbols.map((s) => s.toUpperCase());
     const uniqueSymbols = Array.from(new Set(upperSymbols));
     setSymbolsState(uniqueSymbols.slice(0, MAX_SYMBOLS));
+  }, []);
+
+  // interval setter
+  const setInterval = useCallback((newInterval: TickInterval) => {
+    setIntervalState(newInterval);
   }, []);
 
   // refetch 함수
@@ -254,14 +259,14 @@ export function useStockCompare(options: UseStockCompareOptions = {}): UseStockC
 
     return {
       symbols: validSymbols,
-      period,
+      interval,
       compareMode,
       data: compareData,
       quotes,
     };
-  }, [rawData, symbols, period, compareMode]);
+  }, [rawData, symbols, interval, compareMode]);
 
-  // symbols/period 변경 시 자동 fetch
+  // symbols/interval 변경 시 자동 fetch
   useEffect(() => {
     if (autoFetch) {
       fetchData();
@@ -283,7 +288,7 @@ export function useStockCompare(options: UseStockCompareOptions = {}): UseStockC
     addSymbol,
     removeSymbol,
     setSymbols,
-    setPeriod,
+    setInterval,
     setCompareMode,
     refetch,
     canAddMore,

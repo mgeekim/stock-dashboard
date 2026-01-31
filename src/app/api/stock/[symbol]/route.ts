@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getProvider, isKoreanStock, ProviderError } from '@/features/stock/providers';
-import { PeriodOption, CustomPeriod } from '@/features/stock/types';
+import { TickInterval } from '@/features/stock/types';
 
 interface StockAPIResponse {
   success: boolean;
   symbol: string;
   market: 'US' | 'KR';
+  interval: TickInterval;
   quote?: {
     symbol: string;
     name: string;
@@ -41,10 +42,7 @@ interface StockAPIResponse {
  * 단일 종목의 시세 및 과거 데이터 조회
  *
  * Query Parameters:
- * - period: 기간 옵션 (1d, 5d, 1m, 3m, 6m, 1y, 5y, max, custom)
- * - startDate: 시작일 (custom 기간일 때, YYYY-MM-DD)
- * - endDate: 종료일 (custom 기간일 때, YYYY-MM-DD)
- * - interval: 봉 간격 (custom 기간일 때, minute|hour|day|week|month)
+ * - interval: 틱 간격 (1m, 3m, 5m, 10m, 30m, 1h, 1d, 1wk, 1mo) - 기본값: 1d
  */
 export async function GET(
   request: NextRequest,
@@ -54,10 +52,7 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
 
   // 파라미터 파싱
-  const period = (searchParams.get('period') || '1y') as PeriodOption;
-  const startDate = searchParams.get('startDate');
-  const endDate = searchParams.get('endDate');
-  const interval = searchParams.get('interval') as CustomPeriod['interval'] | null;
+  const interval = (searchParams.get('interval') || '1d') as TickInterval;
 
   // 마켓 판별
   const market = isKoreanStock(symbol) ? 'KR' : 'US';
@@ -66,26 +61,17 @@ export async function GET(
     // Provider 가져오기
     const provider = await getProvider(symbol);
 
-    // 커스텀 기간 설정
-    let customPeriod: CustomPeriod | undefined;
-    if (period === 'custom' && startDate && endDate && interval) {
-      customPeriod = {
-        startDate,
-        endDate,
-        interval,
-      };
-    }
-
     // 병렬로 시세와 과거 데이터 조회
     const [quote, historical] = await Promise.all([
       provider.getQuote(symbol),
-      provider.getHistorical(symbol, period, customPeriod),
+      provider.getHistorical(symbol, interval),
     ]);
 
     const response: StockAPIResponse = {
       success: true,
       symbol: symbol.toUpperCase(),
       market,
+      interval,
       quote,
       historical,
       timestamp: Date.now(),
@@ -109,6 +95,7 @@ export async function GET(
       success: false,
       symbol: symbol.toUpperCase(),
       market,
+      interval,
       error: errorMessage,
       timestamp: Date.now(),
     };

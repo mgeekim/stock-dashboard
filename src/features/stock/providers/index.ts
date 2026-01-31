@@ -1,8 +1,7 @@
 import {
   StockQuote,
   HistoricalDataPoint,
-  PeriodOption,
-  CustomPeriod,
+  TickInterval,
   SearchResult,
 } from '../types';
 
@@ -21,14 +20,12 @@ export interface StockDataProvider {
   /**
    * 과거 데이터 조회
    * @param symbol - 종목 코드
-   * @param period - 기간 옵션
-   * @param customPeriod - 사용자 지정 기간 (period가 'custom'일 때)
+   * @param interval - 틱 간격
    * @returns 과거 데이터 배열
    */
   getHistorical(
     symbol: string,
-    period: PeriodOption,
-    customPeriod?: CustomPeriod
+    interval?: TickInterval
   ): Promise<HistoricalDataPoint[]>;
 
   /**

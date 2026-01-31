@@ -1,8 +1,7 @@
 import {
   StockQuote,
   HistoricalDataPoint,
-  PeriodOption,
-  CustomPeriod,
+  TickInterval,
   SearchResult,
 } from '../types';
 import { StockDataProvider, ProviderError } from './index';
@@ -66,8 +65,7 @@ export class KISProvider implements StockDataProvider {
    */
   async getHistorical(
     symbol: string,
-    period: PeriodOption,
-    customPeriod?: CustomPeriod
+    interval?: TickInterval
   ): Promise<HistoricalDataPoint[]> {
     // TODO: KIS API 연동 구현
     // - GET /uapi/domestic-stock/v1/quotations/inquire-daily-price

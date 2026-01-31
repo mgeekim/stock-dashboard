@@ -1,10 +1,9 @@
 import {
   StockQuote,
   HistoricalDataPoint,
-  PeriodOption,
-  CustomPeriod,
+  TickInterval,
   SearchResult,
-  PERIOD_CONFIG,
+  INTERVAL_CONFIG,
 } from '../types';
 import { StockDataProvider, ProviderError } from './index';
 
@@ -74,32 +73,21 @@ export class YahooProvider implements StockDataProvider {
    */
   async getHistorical(
     symbol: string,
-    period: PeriodOption,
-    customPeriod?: CustomPeriod
+    interval: TickInterval = '1d'
   ): Promise<HistoricalDataPoint[]> {
     try {
       const yahooFinance = await getYahooFinance();
 
-      let period1: Date;
-      let period2: Date = new Date();
-      let interval: '1m' | '5m' | '15m' | '1h' | '1d' | '1wk' | '1mo';
-
-      if (period === 'custom' && customPeriod) {
-        period1 = new Date(customPeriod.startDate);
-        period2 = new Date(customPeriod.endDate);
-        interval = this.mapInterval(customPeriod.interval);
-      } else {
-        const config = PERIOD_CONFIG[period as Exclude<PeriodOption, 'custom'>];
-        period1 = new Date();
-        period1.setDate(period1.getDate() - (config.days || 365));
-        interval = config.interval as typeof interval;
-      }
+      const config = INTERVAL_CONFIG[interval];
+      const period1 = new Date();
+      period1.setDate(period1.getDate() - config.defaultDays);
+      const period2 = new Date();
 
       // v3 API uses chart() method instead of historical()
       const result = await yahooFinance.chart(symbol, {
         period1: period1.toISOString().split('T')[0],
         period2: period2.toISOString().split('T')[0],
-        interval,
+        interval: config.yahooInterval,
       });
 
       if (!result || !result.quotes || result.quotes.length === 0) {
@@ -155,22 +143,6 @@ export class YahooProvider implements StockDataProvider {
         this.name
       );
     }
-  }
-
-  /**
-   * 커스텀 기간의 interval을 Yahoo Finance 형식으로 변환
-   */
-  private mapInterval(
-    interval: CustomPeriod['interval']
-  ): '1m' | '5m' | '15m' | '1h' | '1d' | '1wk' | '1mo' {
-    const mapping: Record<CustomPeriod['interval'], '1m' | '5m' | '15m' | '1h' | '1d' | '1wk' | '1mo'> = {
-      minute: '1m',
-      hour: '1h',
-      day: '1d',
-      week: '1wk',
-      month: '1mo',
-    };
-    return mapping[interval];
   }
 
   /**

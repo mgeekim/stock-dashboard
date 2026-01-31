@@ -2,31 +2,31 @@
 
 import React from "react";
 import { useStockCompare, UseStockCompareOptions } from "../../hooks";
-import { PeriodOption, PERIOD_CONFIG } from "../../types";
+import { TickInterval, INTERVAL_CONFIG } from "../../types";
 import { StockCompareChart } from "./StockCompareChart";
 import { SymbolPicker } from "./SymbolPicker";
 import { CompareLegend } from "./CompareLegend";
 
 export interface StockCompareContainerProps {
   initialSymbols?: string[];
-  initialPeriod?: PeriodOption;
+  initialInterval?: TickInterval;
   initialCompareMode?: "percent" | "price";
   className?: string;
 }
 
 /**
  * 종목 비교 컨테이너 컴포넌트
- * 종목 선택, 기간 선택, 비교 차트, 범례를 통합합니다.
+ * 종목 선택, 간격 선택, 비교 차트, 범례를 통합합니다.
  */
 export function StockCompareContainer({
   initialSymbols = [],
-  initialPeriod = "1y",
+  initialInterval = "1d",
   initialCompareMode = "percent",
   className = "",
 }: StockCompareContainerProps) {
   const options: UseStockCompareOptions = {
     symbols: initialSymbols,
-    period: initialPeriod,
+    interval: initialInterval,
     compareMode: initialCompareMode,
   };
 
@@ -37,15 +37,15 @@ export function StockCompareContainer({
     partialErrors,
     addSymbol,
     removeSymbol,
-    setPeriod,
+    setInterval,
     setCompareMode,
-    canAddMore,
   } = useStockCompare(options);
 
-  // 기간 옵션 (custom 제외)
-  const periodOptions = Object.entries(PERIOD_CONFIG).filter(
-    ([key]) => key !== "custom"
-  ) as [Exclude<PeriodOption, "custom">, typeof PERIOD_CONFIG["1d"]][];
+  // 간격 옵션
+  const intervalOptions = Object.entries(INTERVAL_CONFIG) as [
+    TickInterval,
+    typeof INTERVAL_CONFIG["1d"]
+  ][];
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -61,21 +61,21 @@ export function StockCompareContainer({
           />
         </div>
 
-        {/* 기간 & 모드 선택 */}
+        {/* 간격 & 모드 선택 */}
         <div className="flex flex-wrap gap-2 lg:flex-nowrap">
-          {/* 기간 선택 */}
-          <div className="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
-            {periodOptions.map(([key, config]) => (
+          {/* 간격 선택 */}
+          <div className="flex flex-wrap gap-1">
+            {intervalOptions.map(([key, config]) => (
               <button
                 key={key}
-                onClick={() => setPeriod(key)}
-                className={`px-3 py-2 text-sm font-medium transition-colors
-                  ${data?.period === key
+                onClick={() => setInterval(key)}
+                className={`px-2 py-1.5 text-xs font-medium rounded-lg transition-colors
+                  ${data?.interval === key
                     ? "bg-blue-500 text-white"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                   }`}
               >
-                {config.labelEn}
+                {config.label}
               </button>
             ))}
           </div>

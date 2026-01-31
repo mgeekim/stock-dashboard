@@ -3,8 +3,7 @@ import {
   StockData,
   StockQuote,
   HistoricalDataPoint,
-  PeriodOption,
-  CustomPeriod,
+  TickInterval,
 } from '../types';
 
 // API 응답 타입
@@ -12,6 +11,7 @@ interface StockAPIResponse {
   success: boolean;
   symbol: string;
   market: 'US' | 'KR';
+  interval: TickInterval;
   quote?: StockQuote;
   historical?: HistoricalDataPoint[];
   error?: string;
@@ -21,8 +21,7 @@ interface StockAPIResponse {
 // 훅 옵션
 export interface UseStockDataOptions {
   symbol?: string;
-  period?: PeriodOption;
-  customPeriod?: CustomPeriod;
+  interval?: TickInterval;
   autoFetch?: boolean;
 }
 
@@ -31,30 +30,28 @@ export interface UseStockDataReturn {
   data: StockData | null;
   loading: boolean;
   error: string | null;
+  interval: TickInterval;
   refetch: () => Promise<void>;
-  setPeriod: (period: PeriodOption) => void;
+  setInterval: (interval: TickInterval) => void;
   setSymbol: (symbol: string) => void;
-  setCustomPeriod: (customPeriod: CustomPeriod | undefined) => void;
 }
 
 /**
  * 단일 종목 데이터를 가져오는 커스텀 훅
  *
  * @example
- * const { data, loading, error, refetch } = useStockData({ symbol: 'AAPL', period: '1y' });
+ * const { data, loading, error, refetch } = useStockData({ symbol: 'AAPL', interval: '1d' });
  */
 export function useStockData(options: UseStockDataOptions = {}): UseStockDataReturn {
   const {
     symbol: initialSymbol = '',
-    period: initialPeriod = '1y',
-    customPeriod: initialCustomPeriod,
+    interval: initialInterval = '1d',
     autoFetch = true,
   } = options;
 
   // 상태 관리
   const [symbol, setSymbol] = useState(initialSymbol);
-  const [period, setPeriod] = useState<PeriodOption>(initialPeriod);
-  const [customPeriod, setCustomPeriod] = useState<CustomPeriod | undefined>(initialCustomPeriod);
+  const [interval, setIntervalState] = useState<TickInterval>(initialInterval);
   const [data, setData] = useState<StockData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,14 +81,7 @@ export function useStockData(options: UseStockDataOptions = {}): UseStockDataRet
 
     try {
       // URL 구성
-      const params = new URLSearchParams({ period });
-
-      if (period === 'custom' && customPeriod) {
-        params.set('startDate', customPeriod.startDate);
-        params.set('endDate', customPeriod.endDate);
-        params.set('interval', customPeriod.interval);
-      }
-
+      const params = new URLSearchParams({ interval });
       const url = `/api/stock/${encodeURIComponent(symbol)}?${params.toString()}`;
 
       const response = await fetch(url, {
@@ -135,14 +125,19 @@ export function useStockData(options: UseStockDataOptions = {}): UseStockDataRet
         setLoading(false);
       }
     }
-  }, [symbol, period, customPeriod]);
+  }, [symbol, interval]);
 
   // refetch 함수 (메모이제이션)
   const refetch = useCallback(async () => {
     await fetchData();
   }, [fetchData]);
 
-  // symbol/period 변경 시 자동 fetch
+  // interval setter
+  const setInterval = useCallback((newInterval: TickInterval) => {
+    setIntervalState(newInterval);
+  }, []);
+
+  // symbol/interval 변경 시 자동 fetch
   useEffect(() => {
     if (autoFetch) {
       fetchData();
@@ -160,9 +155,9 @@ export function useStockData(options: UseStockDataOptions = {}): UseStockDataRet
     data,
     loading,
     error,
+    interval,
     refetch,
-    setPeriod,
+    setInterval,
     setSymbol,
-    setCustomPeriod,
   };
 }

@@ -28,43 +28,41 @@ export interface HistoricalDataPoint {
   volume: number;
 }
 
-// Period Options - 기간 옵션
-export type PeriodOption =
-  | '1d'    // 1일 (1분봉)
-  | '5d'    // 5일 (5분봉)
-  | '1m'    // 1개월 (일봉)
-  | '3m'    // 3개월 (일봉)
-  | '6m'    // 6개월 (일봉)
-  | '1y'    // 1년 (일봉)
-  | '5y'    // 5년 (주봉)
-  | 'max'   // 전체 (월봉)
-  | 'custom'; // 사용자 지정
+// Tick Interval - 틱 간격 옵션
+export type TickInterval =
+  | '1m'    // 1분
+  | '3m'    // 3분
+  | '5m'    // 5분
+  | '10m'   // 10분
+  | '30m'   // 30분
+  | '1h'    // 1시간
+  | '1d'    // 1일
+  | '1wk'   // 1주
+  | '1mo';  // 1개월
 
-// Custom Period - 사용자 지정 기간
-export interface CustomPeriod {
-  startDate: string;  // ISO format (YYYY-MM-DD)
-  endDate: string;    // ISO format (YYYY-MM-DD)
-  interval: 'minute' | 'hour' | 'day' | 'week' | 'month';
-}
-
-// Period Configuration - 기간별 설정
-export interface PeriodConfig {
+// Interval Configuration - 간격별 설정
+export interface IntervalConfig {
   label: string;
   labelEn: string;
-  interval: string;
-  days?: number;
+  yahooInterval: string;  // Yahoo Finance API interval
+  defaultDays: number;    // 기본 조회 기간 (일)
+  maxDays: number;        // 최대 조회 기간 (일)
 }
 
-export const PERIOD_CONFIG: Record<Exclude<PeriodOption, 'custom'>, PeriodConfig> = {
-  '1d': { label: '1일', labelEn: '1D', interval: '1m', days: 1 },
-  '5d': { label: '5일', labelEn: '5D', interval: '5m', days: 5 },
-  '1m': { label: '1개월', labelEn: '1M', interval: '1d', days: 30 },
-  '3m': { label: '3개월', labelEn: '3M', interval: '1d', days: 90 },
-  '6m': { label: '6개월', labelEn: '6M', interval: '1d', days: 180 },
-  '1y': { label: '1년', labelEn: '1Y', interval: '1d', days: 365 },
-  '5y': { label: '5년', labelEn: '5Y', interval: '1wk', days: 1825 },
-  'max': { label: '전체', labelEn: 'MAX', interval: '1mo', days: 7300 },
+export const INTERVAL_CONFIG: Record<TickInterval, IntervalConfig> = {
+  '1m':  { label: '1분', labelEn: '1m', yahooInterval: '1m', defaultDays: 1, maxDays: 7 },
+  '3m':  { label: '3분', labelEn: '3m', yahooInterval: '5m', defaultDays: 1, maxDays: 60 },
+  '5m':  { label: '5분', labelEn: '5m', yahooInterval: '5m', defaultDays: 5, maxDays: 60 },
+  '10m': { label: '10분', labelEn: '10m', yahooInterval: '15m', defaultDays: 5, maxDays: 60 },
+  '30m': { label: '30분', labelEn: '30m', yahooInterval: '30m', defaultDays: 10, maxDays: 60 },
+  '1h':  { label: '1시간', labelEn: '1h', yahooInterval: '1h', defaultDays: 30, maxDays: 730 },
+  '1d':  { label: '1일', labelEn: '1D', yahooInterval: '1d', defaultDays: 365, maxDays: 3650 },
+  '1wk': { label: '1주', labelEn: '1W', yahooInterval: '1wk', defaultDays: 1825, maxDays: 7300 },
+  '1mo': { label: '1개월', labelEn: '1M', yahooInterval: '1mo', defaultDays: 3650, maxDays: 7300 },
 };
+
+// Legacy type alias for backward compatibility
+export type PeriodOption = TickInterval;
 
 // Stock Data - API 응답 데이터
 export interface StockData {
@@ -91,7 +89,7 @@ export interface CompareDataPoint {
 // Stock Compare Data - 종목 비교 데이터
 export interface StockCompareData {
   symbols: string[];
-  period: PeriodOption;
+  interval: TickInterval;
   compareMode: 'percent' | 'price';
   data: CompareDataPoint[];
   quotes: Record<string, StockQuote>;
