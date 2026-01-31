@@ -1,10 +1,11 @@
 ---
 id: TASK-1.1
 title: 'Phase 1: 기반 구축 - 타입 및 유틸리티'
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - '@claude'
 created_date: '2026-01-31 07:30'
-updated_date: '2026-01-31 07:33'
+updated_date: '2026-01-31 07:45'
 labels:
   - setup
 dependencies: []
@@ -19,9 +20,9 @@ parent_task_id: TASK-1
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 src/features/stock/types/index.ts 생성 - StockQuote, HistoricalDataPoint, PeriodOption 등
-- [ ] #2 src/features/stock/utils/formatters.ts 생성 - 가격, 거래량, 날짜 포맷터
-- [ ] #3 src/features/stock/utils/chartConfig.ts 생성 - ApexCharts 기본 설정
+- [x] #1 src/features/stock/types/index.ts 생성 - StockQuote, HistoricalDataPoint, PeriodOption 등
+- [x] #2 src/features/stock/utils/formatters.ts 생성 - 가격, 거래량, 날짜 포맷터
+- [x] #3 src/features/stock/utils/chartConfig.ts 생성 - ApexCharts 기본 설정
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -50,3 +51,20 @@ parent_task_id: TASK-1
    - getVolumeChartOptions() - 거래량 차트 옵션
    - CHART_COLORS 상수 - 차트 색상 (up: #10B981, down: #EF4444, line: #465FFF)
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Phase 1 기반 구축 완료
+
+생성된 파일:
+- src/features/stock/types/index.ts: 타입 정의 (StockQuote, HistoricalDataPoint, PeriodOption, CompareDataPoint 등)
+- src/features/stock/utils/formatters.ts: 포맷터 유틸리티 (formatPrice, formatVolume, formatMarketCap, formatPercent, formatDate 등)
+- src/features/stock/utils/chartConfig.ts: ApexCharts 설정 (getBaseChartOptions, getCandlestickOptions, getLineChartOptions, getVolumeChartOptions, getCompareChartOptions)
+
+주요 구현:
+- 9개 기간 옵션 (1d, 5d, 1m, 3m, 6m, 1y, 5y, max, custom)
+- 다크모드 지원 차트 설정
+- 한국어 날짜/숫자 포맷팅
+- 10개 종목 비교를 위한 색상 팔레트
+<!-- SECTION:FINAL_SUMMARY:END -->
