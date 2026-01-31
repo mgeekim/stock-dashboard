@@ -1,10 +1,11 @@
 ---
 id: TASK-1.9
 title: 'Phase 9: 통합 및 페이지 생성'
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - '@claude'
 created_date: '2026-01-31 07:31'
-updated_date: '2026-01-31 07:37'
+updated_date: '2026-01-31 12:09'
 labels:
   - frontend
   - integration
@@ -20,10 +21,10 @@ parent_task_id: TASK-1
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 src/features/stock/index.ts 생성 - Public API exports
-- [ ] #2 AppSidebar.tsx 수정 - 주식 차트, 종목 비교 메뉴 추가
-- [ ] #3 src/app/(admin)/(others-pages)/stock-chart/page.tsx 생성
-- [ ] #4 src/app/(admin)/(others-pages)/stock-compare/page.tsx 생성
+- [x] #1 src/features/stock/index.ts 생성 - Public API exports
+- [x] #2 AppSidebar.tsx 수정 - 주식 차트, 종목 비교 메뉴 추가
+- [x] #3 src/app/(admin)/(others-pages)/stock-chart/page.tsx 생성
+- [x] #4 src/app/(admin)/(others-pages)/stock-compare/page.tsx 생성
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -69,3 +70,33 @@ parent_task_id: TASK-1
    - StockCompareContainer 렌더링
    - 초기 종목 설정 (예: AAPL, MSFT)
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Phase 9: 통합 및 페이지 생성 완료
+
+## 구현 내용
+
+### src/features/stock/index.ts
+Public API exports
+- Types: StockQuote, HistoricalDataPoint, PeriodOption 등
+- Hooks: useStockData, useStockCompare
+- Components: Charts, Compare, Widgets, Containers
+- Utils: formatters, chartConfig
+
+### AppSidebar.tsx 수정
+- DollarLineIcon import 추가
+- Stock 메뉴 추가 (new 배지)
+  - Stock Chart (/stock-chart)
+  - Compare (/stock-compare)
+
+### stock-chart/page.tsx
+- StockChartContainer 렌더링
+- 전체 기능 활성화 (검색, 기간 선택, 시세 정보, 차트 타입 토글)
+
+### stock-compare/page.tsx
+- StockCompareContainer 렌더링
+- 초기 종목: AAPL, MSFT
+- ComponentCard 래퍼 사용
+<!-- SECTION:FINAL_SUMMARY:END -->

@@ -8,6 +8,7 @@ import {
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
+  DollarLineIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
@@ -15,7 +16,7 @@ import {
   PieChartIcon,
   TableIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
+// import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -57,6 +58,14 @@ const navItems: NavItem[] = [
 ];
 
 const othersItems: NavItem[] = [
+  {
+    icon: <DollarLineIcon />,
+    name: "Stock",
+    subItems: [
+      { name: "Stock Chart", path: "/stock-chart", pro: false, new: true },
+      { name: "Compare", path: "/stock-compare", pro: false, new: true },
+    ],
+  },
   {
     icon: <PieChartIcon />,
     name: "Charts",
