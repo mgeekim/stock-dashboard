@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { useTheme } from "@/context/ThemeContext";
 import { useStockData } from "../../hooks";
-import { PeriodOption, DEFAULT_CHART_COLORS } from "../../types";
+import { TickInterval, DEFAULT_CHART_COLORS } from "../../types";
 import {
   formatPrice,
   formatPercent,
@@ -26,7 +26,7 @@ function MiniChartSkeleton() {
 
 export interface MiniStockChartProps {
   symbol: string;
-  period?: PeriodOption;
+  interval?: TickInterval;
   height?: number;
   showPrice?: boolean;
   showChange?: boolean;
@@ -41,7 +41,7 @@ export interface MiniStockChartProps {
  */
 export function MiniStockChart({
   symbol,
-  period = "1m",
+  interval = "1d",
   height = 120,
   showPrice = true,
   showChange = true,
@@ -54,7 +54,7 @@ export function MiniStockChart({
 
   const { data, loading, error } = useStockData({
     symbol,
-    period,
+    interval,
   });
 
   // 차트 시리즈 데이터

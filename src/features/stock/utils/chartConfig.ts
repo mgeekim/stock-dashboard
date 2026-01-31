@@ -2,6 +2,18 @@ import { ApexOptions } from 'apexcharts';
 import { DEFAULT_CHART_COLORS, ChartColors } from '../types';
 
 /**
+ * Helper function to safely extract yaxis labels from ApexOptions
+ * (yaxis can be either a single object or an array)
+ */
+function getYaxisLabels(yaxis: ApexOptions['yaxis']) {
+  if (!yaxis) return undefined;
+  if (Array.isArray(yaxis)) {
+    return yaxis[0]?.labels;
+  }
+  return yaxis.labels;
+}
+
+/**
  * 기본 차트 옵션
  * @param isDarkMode - 다크모드 여부
  * @returns ApexCharts 기본 옵션
@@ -146,7 +158,7 @@ export function getCandlestickOptions(
         enabled: true,
       },
       labels: {
-        ...baseOptions.yaxis?.labels,
+        ...getYaxisLabels(baseOptions.yaxis),
         formatter: (value: number) => `$${value.toFixed(2)}`,
       },
     },
@@ -241,7 +253,7 @@ export function getLineChartOptions(
     yaxis: {
       ...baseOptions.yaxis,
       labels: {
-        ...baseOptions.yaxis?.labels,
+        ...getYaxisLabels(baseOptions.yaxis),
         formatter: (value: number) => `$${value.toFixed(2)}`,
       },
     },
@@ -298,7 +310,7 @@ export function getVolumeChartOptions(
     yaxis: {
       ...baseOptions.yaxis,
       labels: {
-        ...baseOptions.yaxis?.labels,
+        ...getYaxisLabels(baseOptions.yaxis),
         formatter: (value: number) => {
           if (value >= 1_000_000) {
             return `${(value / 1_000_000).toFixed(0)}M`;
@@ -369,7 +381,7 @@ export function getCompareChartOptions(
     yaxis: {
       ...baseOptions.yaxis,
       labels: {
-        ...baseOptions.yaxis?.labels,
+        ...getYaxisLabels(baseOptions.yaxis),
         formatter: (value: number) =>
           isPercentMode
             ? `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`

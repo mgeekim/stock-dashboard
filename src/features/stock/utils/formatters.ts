@@ -145,12 +145,13 @@ export function formatDate(
     return '-';
   }
 
-  const options: Intl.DateTimeFormatOptions = {
+  const optionsMap: Record<string, Intl.DateTimeFormatOptions> = {
     short: { month: 'numeric', day: 'numeric' },
     medium: { month: 'short', day: 'numeric', year: 'numeric' },
     long: { month: 'long', day: 'numeric', year: 'numeric', weekday: 'short' },
     time: { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
-  }[format];
+  };
+  const options = optionsMap[format];
 
   return dateObj.toLocaleDateString('ko-KR', options);
 }

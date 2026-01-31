@@ -40,11 +40,14 @@ export type TickInterval =
   | '1wk'   // 1주
   | '1mo';  // 1개월
 
+// Yahoo Finance supported intervals
+export type YahooInterval = '1m' | '2m' | '5m' | '15m' | '30m' | '60m' | '90m' | '1h' | '1d' | '5d' | '1wk' | '1mo' | '3mo';
+
 // Interval Configuration - 간격별 설정
 export interface IntervalConfig {
   label: string;
   labelEn: string;
-  yahooInterval: string;  // Yahoo Finance API interval
+  yahooInterval: YahooInterval;  // Yahoo Finance API interval
   defaultDays: number;    // 기본 조회 기간 (일)
   maxDays: number;        // 최대 조회 기간 (일)
 }

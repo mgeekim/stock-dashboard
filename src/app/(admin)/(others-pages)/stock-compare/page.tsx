@@ -16,7 +16,7 @@ export default function StockComparePage() {
         >
           <StockCompareContainer
             initialSymbols={["AAPL", "MSFT"]}
-            initialPeriod="1y"
+            initialInterval="1d"
             initialCompareMode="percent"
           />
         </ComponentCard>

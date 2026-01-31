@@ -11,10 +11,10 @@ export default function StockChartPage() {
       <div className="space-y-6">
         <StockChartContainer
           initialSymbol="AAPL"
-          initialPeriod="1y"
+          initialInterval="1d"
           chartType="candlestick"
           showSearch={true}
-          showPeriodSelector={true}
+          showIntervalSelector={true}
           showInfoCard={true}
           showVolume={true}
           showChartTypeToggle={true}

@@ -95,15 +95,15 @@ export class YahooProvider implements StockDataProvider {
       }
 
       return result.quotes
-        .filter((item: { date: Date | null }) => item.date !== null)
-        .map((item: { date: Date; open: number; high: number; low: number; close: number; volume: number }) => ({
-          date: item.date.toISOString().split('T')[0],
-          timestamp: Math.floor(item.date.getTime() / 1000),
-          open: item.open || 0,
-          high: item.high || 0,
-          low: item.low || 0,
-          close: item.close || 0,
-          volume: item.volume || 0,
+        .filter((item) => item.date !== null && item.date !== undefined)
+        .map((item) => ({
+          date: item.date!.toISOString().split('T')[0],
+          timestamp: Math.floor(item.date!.getTime() / 1000),
+          open: item.open ?? 0,
+          high: item.high ?? 0,
+          low: item.low ?? 0,
+          close: item.close ?? 0,
+          volume: item.volume ?? 0,
         }));
     } catch (error) {
       throw new ProviderError(
@@ -132,10 +132,10 @@ export class YahooProvider implements StockDataProvider {
       return results.quotes
         .filter((item) => item.symbol && item.quoteType)
         .map((item) => ({
-          symbol: item.symbol,
-          name: item.longname || item.shortname || item.symbol,
-          exchange: item.exchange || '',
-          type: this.mapQuoteType(item.quoteType),
+          symbol: item.symbol as string,
+          name: (item.longname || item.shortname || item.symbol) as string,
+          exchange: (item.exchange || '') as string,
+          type: this.mapQuoteType(item.quoteType as string),
         }));
     } catch (error) {
       throw new ProviderError(
