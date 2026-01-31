@@ -1,10 +1,11 @@
 ---
 id: TASK-1.6
 title: 'Phase 6: 종목 비교 컴포넌트'
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - '@claude'
 created_date: '2026-01-31 07:31'
-updated_date: '2026-01-31 07:35'
+updated_date: '2026-01-31 12:00'
 labels:
   - frontend
   - chart
@@ -20,10 +21,10 @@ parent_task_id: TASK-1
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 src/features/stock/components/compare/StockCompareChart.tsx 생성 - 비교 라인 차트
-- [ ] #2 src/features/stock/components/compare/SymbolPicker.tsx 생성 - 종목 추가/제거 UI
-- [ ] #3 src/features/stock/components/compare/CompareLegend.tsx 생성 - 종목별 범례
-- [ ] #4 src/features/stock/components/compare/StockCompareContainer.tsx 생성 - 비교 기능 컨테이너
+- [x] #1 src/features/stock/components/compare/StockCompareChart.tsx 생성 - 비교 라인 차트
+- [x] #2 src/features/stock/components/compare/SymbolPicker.tsx 생성 - 종목 추가/제거 UI
+- [x] #3 src/features/stock/components/compare/CompareLegend.tsx 생성 - 종목별 범례
+- [x] #4 src/features/stock/components/compare/StockCompareContainer.tsx 생성 - 비교 기능 컨테이너
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -63,3 +64,36 @@ parent_task_id: TASK-1
    - 비교 모드 토글 (percent/price)
    - 로딩/에러 상태 처리
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Phase 6: 종목 비교 컴포넌트 구현 완료
+
+## 구현 내용
+
+### StockCompareChart.tsx
+다중 시리즈 라인 차트
+- StockCompareData를 ApexCharts 시리즈로 변환
+- COMPARE_COLORS 팔레트로 종목별 색상 할당
+- compareMode에 따른 Y축 포맷팅 (percent/price)
+
+### SymbolPicker.tsx
+종목 추가/제거 UI
+- 입력 필드 + 추가 버튼
+- 선택된 종목 칩(Chip) 형태로 표시
+- 중복/유효성 검사, 최대 10개 제한
+- 에러 메시지 자동 숨김
+
+### CompareLegend.tsx
+종목별 범례
+- 색상 인디케이터, 종목명, 현재가, 변동률 표시
+- 반응형 그리드 레이아웃 (1~3열)
+
+### StockCompareContainer.tsx
+비교 기능 통합 컨테이너
+- useStockCompare 훅 사용
+- 기간 선택 버튼 그룹
+- 비교 모드 토글 (percent/price)
+- 부분 오류 표시
+<!-- SECTION:FINAL_SUMMARY:END -->
